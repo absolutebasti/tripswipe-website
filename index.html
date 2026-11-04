@@ -70,6 +70,7 @@ p{margin:0}
 .wl .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .wl-msg{margin-top:12px;font-size:15px;font-weight:600;color:#FFB4A8;text-shadow:0 1px 10px rgba(7,22,28,.6)}
 .wl-msg:empty{display:none}
+.wl-msg a{color:#fff}
 .wl.done .wl-form{display:none}
 .wl.done .wl-msg{margin:0;padding:16px 22px;border-radius:24px;background:#fff;color:var(--ink);font-size:17px;text-shadow:none;box-shadow:0 14px 36px rgba(7,22,28,.28)}
 .wl.done .wl-msg:before{content:"✓";display:inline-block;margin-right:8px;color:#2E7D32}
@@ -357,23 +358,26 @@ function setLang(l){
     el.placeholder=l==='en'?el.dataset.enPh:el.dataset.dePh;el.setAttribute('aria-label',el.placeholder);
   });
   document.querySelectorAll('img[data-badge]').forEach(function(el){el.src='img/badges/app-store-'+l+'.svg';});
-  document.querySelectorAll('.wl-msg[data-k]').forEach(function(m){m.textContent=WL[l][m.dataset.k];});
+  document.querySelectorAll('.wl-msg[data-k]').forEach(function(m){m.innerHTML=WL[l][m.dataset.k];});
   var t=document.getElementById('lang');t.textContent=l==='en'?'DE':'EN';t.lang=l==='en'?'de':'en';
   document.title=l==='en'?'TripSwipe – Plan trips with friends, one swipe at a time':'TripSwipe – Reisen mit Freunden planen, per Swipe';
 }
 
-// Warteliste (Edge Function waitlist, supabase/005_waitlist.sql): einmal eintragen, keine Bestätigungsmail.
-var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/functions/v1/waitlist';
+// Warteliste (supabase/005_waitlist.sql): ruft die RPC waitlist_join direkt auf, mit dem
+// öffentlichen Schlüssel wie die App. Einmal eintragen, keine Bestätigungsmail.
+var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/rest/v1/rpc/waitlist_join';
+var WAITLIST_KEY='sb_publishable_jUg4uSr5-ByeykTGgDebKA_sTDUREjG';
+var MAIL='<a href="mailto:hello@torchtechnology.de?subject=TripSwipe%20Warteliste">hello@torchtechnology.de</a>';
 var WL={
-  de:{added:'Du stehst auf der Warteliste. Wir melden uns zum Start.',already:'Du stehst schon auf der Warteliste. Wir melden uns zum Start.',bad_email:'Bitte prüf deine E-Mail-Adresse.',error:'Das hat gerade nicht geklappt. Versuch es gleich noch mal.'},
-  en:{added:"You're on the waitlist. We'll be in touch at launch.",already:"You're already on the waitlist. We'll be in touch at launch.",bad_email:'Please check your email address.',error:"That didn't work. Please try again in a moment."}
+  de:{added:'Du stehst auf der Warteliste. Wir melden uns zum Start.',already:'Du stehst schon auf der Warteliste. Wir melden uns zum Start.',bad_email:'Bitte prüf deine E-Mail-Adresse.',busy:'Gerade tragen sich sehr viele ein. Versuch es gleich noch mal.',error:'Das hat gerade nicht geklappt. Schreib uns kurz an '+MAIL+', dann tragen wir dich ein.'},
+  en:{added:"You're on the waitlist. We'll be in touch at launch.",already:"You're already on the waitlist. We'll be in touch at launch.",bad_email:'Please check your email address.',busy:'Lots of sign-ups right now. Please try again in a moment.',error:"That didn't work. Just email "+MAIL+" and we'll add you."}
 };
 var q=/[?&]lang=(de|en)\b/.exec(location.search);
 var lang=q?q[1]:(localStorage.getItem('lang')||(/^de\b/i.test(navigator.language||'de')?'de':'en'));
 setLang(lang);
 document.getElementById('lang').addEventListener('click',function(){lang=lang==='en'?'de':'en';localStorage.setItem('lang',lang);setLang(lang);});
 
-function wlShow(box,k){var m=box.querySelector('.wl-msg');m.dataset.k=k;m.textContent=WL[lang][k];box.classList.toggle('done',k==='added'||k==='already');}
+function wlShow(box,k){var m=box.querySelector('.wl-msg');m.dataset.k=k;m.innerHTML=WL[lang][k];box.classList.toggle('done',k==='added'||k==='already');}
 document.querySelectorAll('.wl').forEach(function(box){
   var f=box.querySelector('form'),b=f.querySelector('button');
   f.addEventListener('submit',function(e){
@@ -381,11 +385,12 @@ document.querySelectorAll('.wl').forEach(function(box){
     var email=f.email.value.trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){wlShow(box,'bad_email');f.email.focus();return;}
     b.disabled=true;
-    fetch(WAITLIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join',email:email,lang:lang,company:f.company.value})})
-      .then(function(r){return r.json().catch(function(){return {};});})
-      .then(function(d){
-        if(d.status==='added'||d.status==='already'){document.querySelectorAll('.wl').forEach(function(x){wlShow(x,d.status);});}
-        else{wlShow(box,d.error==='bad_email'?'bad_email':'error');}
+    fetch(WAITLIST,{method:'POST',headers:{'Content-Type':'application/json','apikey':WAITLIST_KEY},body:JSON.stringify({p_email:email,p_lang:lang,p_company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return null;}).then(function(d){return {ok:r.ok,d:d};});})
+      .then(function(x){
+        if(x.ok&&(x.d==='added'||x.d==='already')){document.querySelectorAll('.wl').forEach(function(y){wlShow(y,x.d);});return;}
+        var c=x.d&&x.d.code;
+        wlShow(box,c==='22023'?'bad_email':(c==='P0001'&&x.d.message==='busy')?'busy':'error');
       },function(){wlShow(box,'error');})
       .then(function(){b.disabled=false;});
   });
