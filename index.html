@@ -363,10 +363,9 @@ function setLang(l){
   document.title=l==='en'?'TripSwipe – Plan trips with friends, one swipe at a time':'TripSwipe – Reisen mit Freunden planen, per Swipe';
 }
 
-// Warteliste (supabase/005_waitlist.sql): ruft die RPC waitlist_join direkt auf, mit dem
-// öffentlichen Schlüssel wie die App. Einmal eintragen, keine Bestätigungsmail.
-var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/rest/v1/rpc/waitlist_join';
-var WAITLIST_KEY='sb_publishable_jUg4uSr5-ByeykTGgDebKA_sTDUREjG';
+// Warteliste: Edge Function tripswipe-waitlist (vorerst im Supabase-Projekt SKI, Quelle in
+// supabase/website/). Einmal eintragen, keine Bestätigungsmail. Siehe WEBSITE.md.
+var WAITLIST='https://svzmmpzevmpodcelzvit.supabase.co/functions/v1/tripswipe-waitlist';
 var MAIL='<a href="mailto:hello@torchtechnology.de?subject=TripSwipe%20Warteliste">hello@torchtechnology.de</a>';
 var WL={
   de:{added:'Du stehst auf der Warteliste. Wir melden uns zum Start.',already:'Du stehst schon auf der Warteliste. Wir melden uns zum Start.',bad_email:'Bitte prüf deine E-Mail-Adresse.',busy:'Gerade tragen sich sehr viele ein. Versuch es gleich noch mal.',error:'Das hat gerade nicht geklappt. Schreib uns kurz an '+MAIL+', dann tragen wir dich ein.'},
@@ -385,12 +384,11 @@ document.querySelectorAll('.wl').forEach(function(box){
     var email=f.email.value.trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){wlShow(box,'bad_email');f.email.focus();return;}
     b.disabled=true;
-    fetch(WAITLIST,{method:'POST',headers:{'Content-Type':'application/json','apikey':WAITLIST_KEY},body:JSON.stringify({p_email:email,p_lang:lang,p_company:f.company.value})})
-      .then(function(r){return r.json().catch(function(){return null;}).then(function(d){return {ok:r.ok,d:d};});})
-      .then(function(x){
-        if(x.ok&&(x.d==='added'||x.d==='already')){document.querySelectorAll('.wl').forEach(function(y){wlShow(y,x.d);});return;}
-        var c=x.d&&x.d.code;
-        wlShow(box,c==='22023'?'bad_email':(c==='P0001'&&x.d.message==='busy')?'busy':'error');
+    fetch(WAITLIST,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'join',email:email,lang:lang,company:f.company.value})})
+      .then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(d){
+        if(d.status==='added'||d.status==='already'){document.querySelectorAll('.wl').forEach(function(y){wlShow(y,d.status);});return;}
+        wlShow(box,d.error==='bad_email'?'bad_email':d.error==='busy'?'busy':'error');
       },function(){wlShow(box,'error');})
       .then(function(){b.disabled=false;});
   });
