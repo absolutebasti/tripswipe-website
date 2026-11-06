@@ -43,8 +43,7 @@ p{margin:0}
 
 .nav{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;justify-content:space-between;max-width:1120px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))}
 .logo{display:inline-flex;align-items:center;gap:11px;text-decoration:none;color:#fff}
-.logo img{width:30px;height:30px;border-radius:8px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
-.logo span{font:700 15px/1 "Inter Display",-apple-system,sans-serif;letter-spacing:.2em}
+.logo img{height:30px;width:auto;display:block}
 .lang{font:600 14px/1 -apple-system,BlinkMacSystemFont,Inter,sans-serif;color:#fff;background:rgba(7,22,28,.28);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:10px 14px;cursor:pointer;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 
 .hero{position:relative;overflow:hidden;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-start;text-align:center;color:#fff;padding:calc(104px + env(safe-area-inset-top)) 20px calc(44px + env(safe-area-inset-bottom))}
@@ -130,7 +129,7 @@ p{margin:0}
 .end{position:relative;overflow:hidden;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;padding:96px 20px}
 .end:before{content:"";position:absolute;z-index:1;inset:0;background:linear-gradient(180deg,var(--ink) 0%,rgba(7,22,28,.5) 24%,rgba(7,22,28,.42) 70%,var(--ink) 100%)}
 .end>div{position:relative;z-index:2;max-width:640px}
-.end .icon{width:96px;height:96px;border-radius:22px;margin:0 auto 28px;box-shadow:0 18px 40px rgba(7,22,28,.45)}
+.end .icon{width:min(300px,70vw);height:auto;margin:0 auto 28px;filter:drop-shadow(0 10px 24px rgba(7,22,28,.5))}
 .end h2,.end .lead{text-shadow:0 1px 3px rgba(7,22,28,.35),0 1px 24px rgba(7,22,28,.45)}
 
 /* Langsamer Zoom auf den großen Bildern, nur ohne „Bewegung reduzieren“. */
@@ -196,7 +195,7 @@ footer a:hover{color:var(--paper)}
 </head>
 <body>
 <header class="nav">
-  <a class="logo" href="./" aria-label="TripSwipe"><img src="img/app-icon.png" alt="" width="256" height="256"><span>TRIPSWIPE</span></a>
+  <a class="logo" href="./" aria-label="TripSwipe"><img src="img/logo-hell.png" alt="TripSwipe" width="600" height="171"></a>
   <button class="lang" id="lang" type="button" lang="en">EN</button>
 </header>
 
@@ -301,7 +300,7 @@ footer a:hover{color:var(--paper)}
 <section class="end" id="join">
   <picture><source media="(min-aspect-ratio:1/1)" srcset="img/photo/end-wide.webp"><img class="fill" src="img/photo/end.webp" alt="" width="960" height="1440" loading="lazy"></picture>
   <div>
-    <img class="icon" src="img/app-icon.png" alt="" width="256" height="256" loading="lazy">
+    <img class="icon" src="img/logo-hell.png" alt="TripSwipe" width="600" height="171" loading="lazy">
     <h2 data-en="Ready for<br>your next trip?">Bereit für den<br>nächsten Trip?</h2>
     <p class="lead pre" data-en="Sign up and we'll email you as soon as TripSwipe is on the App Store.">Trag dich ein. Sobald TripSwipe im App Store ist, bekommst du eine Mail.</p>
     <p class="lead live" data-en="TripSwipe is on the App Store." hidden>TripSwipe ist im App Store.</p>
@@ -363,9 +362,9 @@ function setLang(l){
   document.title=l==='en'?'TripSwipe – Plan trips with friends, one swipe at a time':'TripSwipe – Reisen mit Freunden planen, per Swipe';
 }
 
-// Warteliste: Edge Function tripswipe-waitlist (vorerst im Supabase-Projekt SKI, Quelle in
-// supabase/website/). Einmal eintragen, keine Bestätigungsmail. Siehe WEBSITE.md.
-var WAITLIST='https://svzmmpzevmpodcelzvit.supabase.co/functions/v1/tripswipe-waitlist';
+// Warteliste: Edge Function tripswipe-waitlist im TripSwipe-Supabase-Projekt (Quelle in
+// supabase/functions/tripswipe-waitlist/). Einmal eintragen, keine Bestätigungsmail. Siehe WEBSITE.md.
+var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/functions/v1/tripswipe-waitlist';
 var MAIL='<a href="mailto:hello@torchtechnology.de?subject=TripSwipe%20Warteliste">hello@torchtechnology.de</a>';
 var WL={
   de:{added:'Du stehst auf der Warteliste. Wir melden uns zum Start.',already:'Du stehst schon auf der Warteliste. Wir melden uns zum Start.',bad_email:'Bitte prüf deine E-Mail-Adresse.',busy:'Gerade tragen sich sehr viele ein. Versuch es gleich noch mal.',error:'Das hat gerade nicht geklappt. Schreib uns kurz an '+MAIL+', dann tragen wir dich ein.'},

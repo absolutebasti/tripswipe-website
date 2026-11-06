@@ -19,7 +19,7 @@ p{margin:0 0 12px}
 .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 28px;padding:8px 0 6px;border-bottom:1px solid var(--hair);margin:0 0 40px}
 .brand{display:inline-flex;align-items:center;gap:10px;padding:4px 0;color:var(--ink);text-decoration:none}
 .brand strong{font-size:18px;letter-spacing:.02em}
-.mark{width:28px;height:28px;border-radius:8px;flex:none;background:url(img/app-icon.png) center/100% no-repeat}
+.mark{display:block;height:26px;width:auto}
 .top nav{display:flex;gap:24px}
 .top nav a{color:var(--muted);text-decoration:none;font-size:15px;line-height:20px;padding:12px 0}
 .top nav a:hover,.top nav a[aria-current="page"]{color:var(--ink)}
@@ -65,7 +65,7 @@ footer a{color:var(--muted)}
 <body>
 <main>
 <header class="top">
-  <a class="brand" href="index.html"><span class="mark" aria-hidden="true"></span><strong>TripSwipe</strong></a>
+  <a class="brand" href="index.html" aria-label="TripSwipe"><img class="mark" src="img/logo-hell.png" alt="TripSwipe" width="600" height="171"></a>
   <nav aria-label="Seiten"><a href="privacy.html" aria-current="page">Datenschutz</a><a href="imprint.html">Impressum</a></nav>
 </header>
 

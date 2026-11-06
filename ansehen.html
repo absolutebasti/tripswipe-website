@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reiseplan · TripSwipe</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/img/favicon.png">
+<!--
+  Teilen-Link zum Anschauen. Der ganze Reiseplan steht komprimiert hinter dem # in der Adresse
+  (TripSwipe/Views/TripViewLink.swift). Dieser Teil geht nie an einen Server, die Seite liest ihn nur im Browser.
+  Der Inhalt kommt von außen: Er wird nur als Text eingesetzt, Video-Links nur mit https.
+-->
+<style>
+@font-face{font-family:"Inter Display";font-weight:900;font-display:swap;src:url(fonts/InterDisplay-Black.woff2) format("woff2")}
+@font-face{font-family:"Inter Display";font-weight:700;font-display:swap;src:url(fonts/InterDisplay-Bold.woff2) format("woff2")}
+:root{--ink:#07161C;--paper:#F7F1E6;--card:#0F2229;--hair:#213B44;--muted:#9DB2B8;--sun:#F4A766;--pin:#D2581F}
+*{box-sizing:border-box}
+html{background:var(--ink);color:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Inter",sans-serif;-webkit-text-size-adjust:100%}
+body{max-width:560px;margin:0 auto;padding:28px 16px 64px}
+a{color:var(--sun)}
+.brand{display:flex;align-items:center;gap:8px;font:700 15px "Inter Display",sans-serif;color:var(--muted);text-decoration:none}
+.brand img{height:26px;width:auto;display:block}
+.eyebrow{margin:28px 0 4px;font:700 13px "Inter Display",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+h1{margin:0;font:900 clamp(30px,8vw,42px)/1.05 "Inter Display",sans-serif}
+.dates{margin:8px 0 0;color:var(--muted);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:22px 0 8px}
+.stat{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:12px 8px;text-align:center}
+.stat b{display:block;font:900 24px "Inter Display",sans-serif}
+.stat span{font-size:12px;color:var(--muted);font-weight:600}
+h2{margin:30px 0 10px;font:700 19px "Inter Display",sans-serif}
+.day{margin:0 0 12px;background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:12px 14px}
+.day h3{margin:0 0 6px;font:700 13px "Inter Display",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.place{display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--hair)}
+.day h3+.place,.list>.place:first-child{border-top:0}
+.dot{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px}
+.info{flex:1;min-width:0}
+.name{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta{font-size:13px;color:var(--muted)}
+.side{flex:none;text-align:right;font-size:13px;font-weight:700}
+.match{color:#7BD88F}
+.video{display:inline-block;margin-top:3px;font-size:13px;font-weight:700;text-decoration:none}
+.list{background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:4px 14px}
+.cta{margin-top:36px;padding:20px;border-radius:20px;background:linear-gradient(160deg,#123844,#0B2630);text-align:center}
+.cta p{margin:0 0 12px;color:var(--muted)}
+.cta a{display:inline-block;padding:12px 20px;border-radius:999px;background:var(--sun);color:var(--ink);font-weight:800;text-decoration:none}
+.note{margin-top:22px;font-size:12px;color:var(--muted);text-align:center}
+.empty{margin-top:60px;text-align:center;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="brand" href="/" aria-label="TripSwipe"><img src="/img/logo-hell.png" alt="TripSwipe" width="600" height="171"></a>
+<main id="app"><p class="empty">Plan wird geladen …</p></main>
+<script>
+(function () {
+  "use strict";
+  var CATS = {
+    strand: ["Strand", "#0A84C6", "🏖️"], bucht: ["Bucht", "#0C9A86", "🌊"], sehen: ["Sehenswürdigkeit", "#7D4FD0", "📷"],
+    essen: ["Essen & Trinken", "#D2601F", "🍴"], shopping: ["Shopping", "#CC2F80", "🛍️"], unterkunft: ["Unterkunft", "#3F5BD0", "🏠"],
+    erleben: ["Erlebnis", "#6F7F12", "⭐"]
+  };
+  var app = document.getElementById("app");
+
+  function el(tag, cls, text) {
+    var node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined && text !== null) node.textContent = String(text);
+    return node;
+  }
+  function str(v, max) { return typeof v === "string" ? v.slice(0, max || 120) : ""; }
+  function num(v) { return typeof v === "number" && isFinite(v) ? v : 0; }
+  function comma(v) { return v.toFixed(1).replace(".", ","); }
+
+  function fail(message) {
+    app.textContent = "";
+    var box = el("div", "empty");
+    box.appendChild(el("p", null, message));
+    var link = el("a", null, "Zu TripSwipe");
+    link.href = "/";
+    box.appendChild(link);
+    app.appendChild(box);
+  }
+
+  function dateText(s, e) {
+    var re = /^\d{4}-\d{2}-\d{2}$/;
+    if (!re.test(s) || !re.test(e)) return "Datum noch offen";
+    var opts = { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" };
+    var a = new Date(s + "T00:00:00Z"), b = new Date(e + "T00:00:00Z");
+    return a.toLocaleDateString("de-DE", opts) + " – " + b.toLocaleDateString("de-DE", opts);
+  }
+
+  async function decode(hash) {
+    var b64 = hash.replace(/-/g, "+").replace(/_/g, "/");
+    while (b64.length % 4) b64 += "=";
+    var bytes = Uint8Array.from(atob(b64), function (c) { return c.charCodeAt(0); });
+    var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+    var text = await new Response(stream).text();
+    return JSON.parse(text);
+  }
+
+  function placeRow(p) {
+    var cat = CATS[p.cat] || CATS.sehen;
+    var row = el("div", "place");
+    var dot = el("div", "dot", cat[2]);
+    dot.style.background = cat[1] + "33";
+    row.appendChild(dot);
+    var info = el("div", "info");
+    info.appendChild(el("div", "name", p.name));
+    info.appendChild(el("div", "meta", [cat[0], p.region].filter(Boolean).join(" · ")));
+    if (/^https:\/\//.test(p.video)) {
+      var a = el("a", "video", "▶ Video ansehen");
+      a.href = p.video;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      info.appendChild(a);
+    }
+    row.appendChild(info);
+    var side = el("div", "side");
+    if (p.match) side.appendChild(el("div", "match", "Match"));
+    if (p.avg > 0) side.appendChild(el("div", null, "★ " + comma(p.avg)));
+    if (p.fav > 0) side.appendChild(el("div", null, "♥ " + p.fav));
+    row.appendChild(side);
+    return row;
+  }
+
+  function render(d) {
+    var places = (Array.isArray(d.p) ? d.p : []).slice(0, 300).map(function (r) {
+      r = Array.isArray(r) ? r : [];
+      return { name: str(r[0]), cat: str(r[1], 20), score: num(r[4]), match: r[5] === 1, day: num(r[6]),
+               avg: num(r[7]), fav: num(r[8]), video: str(r[9], 500), region: str(r[10]) };
+    }).filter(function (p) { return p.name; });
+
+    var name = str(d.n) || "Reiseplan", dest = str(d.d);
+    document.title = name + " · TripSwipe";
+    app.textContent = "";
+    app.appendChild(el("p", "eyebrow", dest));
+    app.appendChild(el("h1", null, name));
+    app.appendChild(el("p", "dates", dateText(str(d.s, 10), str(d.e, 10))));
+
+    var matches = places.filter(function (p) { return p.match; });
+    var stats = el("div", "stats");
+    function stat(value, label) {
+      var box = el("div", "stat");
+      box.appendChild(el("b", null, value));
+      box.appendChild(el("span", null, label));
+      stats.appendChild(box);
+    }
+    stat(places.length, places.length === 1 ? "Ort" : "Orte");
+    stat(matches.length, matches.length === 1 ? "Match" : "Matches");
+    if (num(d.t) > 0) stat(num(d.t), num(d.t) === 1 ? "Tag" : "Tage");
+    if (num(d.k) > 0) stat(num(d.k), num(d.k) === 1 ? "Person" : "Personen");
+    if (num(d.r) > 0) stat("★ " + comma(num(d.r)), "Bewertung");
+    app.appendChild(stats);
+
+    var days = {};
+    places.forEach(function (p) { if (p.day > 0) (days[p.day] = days[p.day] || []).push(p); });
+    var dayNumbers = Object.keys(days).map(Number).sort(function (a, b) { return a - b; });
+    if (dayNumbers.length) {
+      app.appendChild(el("h2", null, "Tag für Tag"));
+      dayNumbers.forEach(function (n) {
+        var box = el("section", "day");
+        box.appendChild(el("h3", null, "Tag " + n));
+        days[n].forEach(function (p) { box.appendChild(placeRow(p)); });
+        app.appendChild(box);
+      });
+    }
+
+    var rest = places.filter(function (p) { return p.day === 0; });
+    if (rest.length) {
+      app.appendChild(el("h2", null, dayNumbers.length ? "Weitere Orte" : "Alle Orte"));
+      var list = el("div", "list");
+      rest.forEach(function (p) { list.appendChild(placeRow(p)); });
+      app.appendChild(list);
+    }
+
+    var cta = el("div", "cta");
+    cta.appendChild(el("p", null, "Geplant mit TripSwipe: Reisevideos sammeln, zusammen swipen, fertig ist der Plan."));
+    var link = el("a", null, "TripSwipe ansehen");
+    link.href = "/";
+    cta.appendChild(link);
+    app.appendChild(cta);
+    app.appendChild(el("p", "note", "Nur zum Anschauen. Dieser Stand wurde beim Teilen gespeichert und ändert sich nicht mehr."));
+  }
+
+  // Neuer Link im selben Tab: Seite neu aufbauen.
+  window.addEventListener("hashchange", function () { location.reload(); });
+  var hash = location.hash.slice(1);
+  if (!hash) { fail("Dieser Link enthält keinen Reiseplan."); return; }
+  if (typeof DecompressionStream === "undefined") { fail("Dein Browser ist zu alt für diesen Link. Bitte aktualisiere ihn."); return; }
+  decode(hash).then(render).catch(function () { fail("Dieser Link ist unvollständig oder beschädigt."); });
+})();
+</script>
+</body>
+</html>
