@@ -84,7 +84,7 @@ footer{margin-top:36px;font-size:13px;color:var(--muted)}
   var steps = el("ol");
   [["TripSwipe installieren", "Gerade im Test über TestFlight. Den Link dazu bekommst du von der Person, die dich eingeladen hat."],
    ["Oben auf „In TripSwipe öffnen“ tippen", "Oder in der App „Trip beitreten“ wählen und den Code eingeben."],
-   ["Videos teilen und swipen", "Wollen alle hin, landet der Ort im gemeinsamen Plan."]].forEach(function (s) {
+   ["Videos teilen und swipen", "Will die Mehrheit hin, landet der Ort im gemeinsamen Plan."]].forEach(function (s) {
     var li = el("li"); var d = el("div", {}, s[0]); d.appendChild(el("small", {}, s[1])); li.appendChild(d); steps.appendChild(li);
   });
   app.appendChild(steps);
