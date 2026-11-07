@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Einladung · TripSwipe</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/img/favicon.png">
+<!-- Vorschau in WhatsApp, iMessage und Co. Das Bild erzeugt tools/render_invite_og.swift. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TripSwipe">
+<meta property="og:title" content="Komm mit auf die Reise! ✈️">
+<meta property="og:description" content="Du bist zu einem Trip eingeladen. Tippen, beitreten und gemeinsam swipen, wohin es geht.">
+<meta property="og:image" content="https://tripswipe.torchtechnology.de/img/og-einladung.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!--
+  Einladungslink: /j/?c=K7MX2P. Der Code steht nur in der Adresse, die Seite schickt ihn nirgendwohin.
+  „In TripSwipe öffnen“ startet die App über tripswipe://join/CODE.
+-->
+<style>
+@font-face{font-family:"Inter Display";font-weight:900;font-display:swap;src:url(/fonts/InterDisplay-Black.woff2) format("woff2")}
+@font-face{font-family:"Inter Display";font-weight:700;font-display:swap;src:url(/fonts/InterDisplay-Bold.woff2) format("woff2")}
+:root{--ink:#07161C;--paper:#F7F1E6;--card:#0F2229;--hair:#213B44;--muted:#9DB2B8;--sun:#F4A766;--pin:#D2581F}
+*{box-sizing:border-box}
+html{background:var(--ink);color:var(--paper);font-family:-apple-system,BlinkMacSystemFont,"Inter",sans-serif;-webkit-text-size-adjust:100%}
+body{max-width:520px;margin:0 auto;padding:28px 16px 64px}
+a{color:var(--sun)}
+.brand img{height:26px;width:auto;display:block}
+.hero{margin:22px 0 0;border-radius:22px;overflow:hidden;aspect-ratio:1200/630;background:var(--card) url(/img/photo/hero-wide.webp) center 70%/cover}
+.eyebrow{margin:26px 0 4px;font:700 13px "Inter Display",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--sun)}
+h1{margin:0;font:900 clamp(30px,8vw,40px)/1.05 "Inter Display",sans-serif}
+p{color:var(--muted);line-height:1.5}
+.code{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:22px 0 14px;background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:14px 16px}
+.code span{font-size:13px;color:var(--muted);font-weight:600}
+.code b{display:block;font:900 30px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;color:var(--paper)}
+.copy{border:0;border-radius:999px;padding:10px 14px;background:var(--hair);color:var(--paper);font-weight:700;font-size:14px}
+.open{display:block;text-align:center;text-decoration:none;background:var(--sun);color:var(--ink);font:700 18px "Inter Display",sans-serif;padding:17px;border-radius:999px}
+ol{margin:26px 0 0;padding:0;list-style:none;counter-reset:s}
+ol li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;margin:0 0 14px;color:var(--paper);line-height:1.4}
+ol li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--pin);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+ol li small{display:block;color:var(--muted);font-size:14px}
+.err{background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:16px}
+footer{margin-top:36px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<a class="brand" href="/" aria-label="TripSwipe"><img src="/img/logo-hell.png" alt="TripSwipe" width="600" height="171"></a>
+<div class="hero" role="img" aria-label="Freunde blicken auf eine Bucht"></div>
+<main id="app"></main>
+<footer>TripSwipe sammelt Reisevideos auf einer Karte. Die Gruppe swipet, was sie machen will. <a href="/">Mehr erfahren</a></footer>
+<script>
+(function () {
+  var raw = new URLSearchParams(location.search).get("c") || location.hash.slice(1);
+  var code = (raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  var app = document.getElementById("app");
+  function el(tag, attrs, text) {
+    var e = document.createElement(tag);
+    for (var k in attrs || {}) e.setAttribute(k, attrs[k]);
+    if (text) e.textContent = text;
+    return e;
+  }
+  if (code.length < 4 || code.length > 10) {
+    app.appendChild(el("p", { class: "eyebrow" }, "Einladung"));
+    app.appendChild(el("h1", {}, "Dieser Link ist unvollständig."));
+    app.appendChild(el("p", {}, "Bitte die Person, die dich eingeladen hat, um einen neuen Link oder den Code. Den Code kannst du in TripSwipe unter „Trip beitreten“ eingeben."));
+    return;
+  }
+  app.appendChild(el("p", { class: "eyebrow" }, "Du bist eingeladen"));
+  app.appendChild(el("h1", {}, "Komm mit auf die Reise!"));
+  var box = el("div", { class: "code" });
+  var left = el("div");
+  left.appendChild(el("span", {}, "Einladungscode"));
+  left.appendChild(el("b", {}, code));
+  var copy = el("button", { class: "copy", type: "button" }, "Kopieren");
+  copy.onclick = function () {
+    (navigator.clipboard ? navigator.clipboard.writeText(code) : Promise.reject()).then(function () { copy.textContent = "Kopiert ✓"; }, function () {});
+  };
+  box.appendChild(left); box.appendChild(copy);
+  app.appendChild(box);
+  app.appendChild(el("a", { class: "open", href: "tripswipe://join/" + code }, "In TripSwipe öffnen"));
+  var steps = el("ol");
+  [["TripSwipe installieren", "Gerade im Test über TestFlight. Den Link dazu bekommst du von der Person, die dich eingeladen hat."],
+   ["Oben auf „In TripSwipe öffnen“ tippen", "Oder in der App „Trip beitreten“ wählen und den Code eingeben."],
+   ["Videos teilen und swipen", "Wollen alle hin, landet der Ort im gemeinsamen Plan."]].forEach(function (s) {
+    var li = el("li"); var d = el("div", {}, s[0]); d.appendChild(el("small", {}, s[1])); li.appendChild(d); steps.appendChild(li);
+  });
+  app.appendChild(steps);
+})();
+</script>
+</body>
+</html>
