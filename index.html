@@ -418,7 +418,7 @@ function setLang(l){
 
 // Warteliste: Edge Function tripswipe-waitlist im TripSwipe-Supabase-Projekt (Quelle in
 // supabase/functions/tripswipe-waitlist/). Einmal eintragen, keine Bestätigungsmail. Siehe WEBSITE.md.
-var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/functions/v1/tripswipe-waitlist';
+var WAITLIST='https://nmbqkikguusvuqvevvfz.supabase.co/functions/v1/tripswipe-waitlist?forceFunctionRegion=eu-central-1';
 var MAIL='<a href="mailto:hello@torchtechnology.de?subject=TripSwipe%20Warteliste">hello@torchtechnology.de</a>';
 var WL={
   de:{added:'Du stehst auf der Warteliste. Wir melden uns zum Start.',already:'Du stehst schon auf der Warteliste. Wir melden uns zum Start.',bad_email:'Bitte prüf deine E-Mail-Adresse.',busy:'Gerade tragen sich sehr viele ein. Versuch es gleich noch mal.',error:'Das hat gerade nicht geklappt. Schreib uns kurz an '+MAIL+', dann tragen wir dich ein.'},
