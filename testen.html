@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07161C">
+<meta name="robots" content="noindex">
+<title>TripSwipe testen – Testgruppen gesucht</title>
+<meta name="description" content="Ihr verreist bald mit Freunden? Plant die Reise mit TripSwipe, bevor die App im App Store ist. Kostenlos über TestFlight.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://tripswipe.torchtechnology.de/testen.html">
+<meta property="og:title" content="TripSwipe testen – Testgruppen gesucht">
+<meta property="og:description" content="Ihr verreist bald mit Freunden? Plant die Reise mit TripSwipe, bevor die App im App Store ist. Kostenlos über TestFlight.">
+<meta property="og:image" content="https://tripswipe.torchtechnology.de/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preload" href="fonts/InterDisplay-Black.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Inter Display";font-weight:900;font-display:swap;src:url(fonts/InterDisplay-Black.woff2) format("woff2")}
+@font-face{font-family:"Inter Display";font-weight:700;font-display:swap;src:url(fonts/InterDisplay-Bold.woff2) format("woff2")}
+/* Wie die Startseite: tiefes Meer, Sand, Pin-Orange. */
+:root{--ink:#07161C;--paper:#F7F1E6;--card:#0F2229;--hair:#213B44;--muted:#9DB2B8;--sun:#F4A766;--pin:#D2581F;--pin-dark:#B94A16}
+*{box-sizing:border-box}
+html{background:var(--ink);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--paper);font:17px/1.5 -apple-system,BlinkMacSystemFont,Inter,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-wrap:break-word}
+img,video{display:block;max-width:100%;height:auto}
+a{color:inherit}
+h1,h2,.num{font-family:"Inter Display",-apple-system,BlinkMacSystemFont,Inter,sans-serif;font-weight:900;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(40px,9vw,88px);line-height:1}
+h2{font-size:clamp(30px,4.6vw,52px);line-height:1.06}
+h3{font-size:18px;line-height:1.3;margin:0 0 6px}
+p{margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left))}
+.kicker{font:700 13px/1.4 "Inter Display",-apple-system,sans-serif;letter-spacing:.16em;text-transform:uppercase;margin:0 0 14px;color:var(--sun)}
+.lead{font-size:clamp(17px,1.9vw,20px);line-height:1.45;margin-top:16px}
+.muted{color:var(--muted)}
+.center{text-align:center}
+[hidden]{display:none!important}
+
+.nav{display:flex;align-items:center;justify-content:space-between;max-width:1120px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left))}
+.logo{display:inline-flex;text-decoration:none}
+.logo img{height:30px;width:auto}
+.lang{font:600 14px/1 -apple-system,BlinkMacSystemFont,Inter,sans-serif;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:10px 14px;cursor:pointer}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;height:54px;padding:0 28px;border:0;border-radius:999px;background:var(--pin);color:#fff;font:600 17px/1 -apple-system,BlinkMacSystemFont,Inter,sans-serif;text-decoration:none;cursor:pointer}
+.btn:hover{background:var(--pin-dark)}
+.btn.ghost{background:transparent;border:1px solid var(--hair);color:var(--paper)}
+.btn.ghost:hover{border-color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+
+/* Start: Text links, iPhone mit echter Aufnahme rechts. Auf dem Handy untereinander. */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:64px 0 88px}
+.hero .small{font-size:14px;margin-top:14px}
+.phone{justify-self:center;width:min(300px,72vw);padding:9px;background:#050708;border-radius:46px;box-shadow:0 0 0 1px rgba(255,255,255,.22),0 30px 70px rgba(0,0,0,.55)}
+.glass{position:relative;aspect-ratio:700/1522;border-radius:38px;overflow:hidden;background:#000}
+.glass video{width:100%;height:100%;object-fit:cover}
+
+.section{padding:88px 0;border-top:1px solid var(--hair)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:24px;padding:26px 22px}
+.card .num{font-size:36px;line-height:1;color:var(--sun);margin-bottom:14px}
+.card p{font-size:15px;line-height:1.5;color:var(--muted)}
+
+.shots{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-top:44px;padding-bottom:4px}
+.shots::-webkit-scrollbar{display:none}
+.shots figure{flex:none;width:min(58vw,240px);margin:0;scroll-snap-align:start}
+.shots img{border-radius:24px;border:1px solid var(--hair);aspect-ratio:640/1391;width:100%}
+.shots figcaption{font-size:14px;color:var(--muted);margin-top:10px;text-align:center}
+@media (min-width:1000px){.shots{overflow:visible}.shots figure{flex:1 1 0;width:auto}}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+.list{list-style:none;margin:14px 0 0;padding:0}
+.list li{position:relative;padding:0 0 12px 30px;font-size:16px;line-height:1.45;color:var(--muted)}
+.list li:before{content:"";position:absolute;left:2px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--pin);box-shadow:inset 0 0 0 4px var(--card)}
+.list strong{color:var(--paper);font-weight:600}
+
+.creator{display:grid;grid-template-columns:1.2fr .8fr;gap:32px;align-items:center;background:var(--card);border:1px solid var(--hair);border-radius:28px;padding:40px}
+.creator .actions{margin-top:22px}
+
+.howto{counter-reset:s;list-style:none;margin:40px 0 0;padding:0;display:grid;gap:12px;max-width:720px}
+.howto li{counter-increment:s;display:flex;gap:16px;align-items:flex-start;background:var(--card);border:1px solid var(--hair);border-radius:20px;padding:18px 20px;font-size:16px;line-height:1.45;color:var(--muted)}
+.howto li:before{content:counter(s);flex:none;width:32px;height:32px;border-radius:50%;background:var(--pin);color:#fff;font:700 16px/32px "Inter Display",sans-serif;text-align:center}
+.howto strong{color:var(--paper);font-weight:600}
+.howto a{color:var(--paper)}
+
+.final{padding:96px 0 72px;text-align:center}
+.final .actions{justify-content:center}
+
+footer{padding:32px 20px calc(48px + env(safe-area-inset-bottom));text-align:center;font-size:14px;color:var(--muted);border-top:1px solid var(--hair)}
+footer nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 28px;margin-bottom:16px}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--paper)}
+
+@media (max-width:899px){
+  .hero{grid-template-columns:1fr;gap:40px;padding:40px 0 64px;text-align:center}
+  .hero .actions{justify-content:center}
+  .steps,.two,.creator{grid-template-columns:1fr}
+  .creator{padding:28px 22px}
+  .section{padding:64px 0}
+}
+@media (max-width:479px){
+  .actions .btn{width:100%}
+}
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="logo" href="./" aria-label="TripSwipe"><img src="img/logo-hell.png" alt="TripSwipe" width="600" height="171"></a>
+  <button class="lang" id="lang" type="button" lang="en">EN</button>
+</header>
+
+<main class="wrap">
+<section class="hero">
+  <div>
+    <p class="kicker" data-en="Test groups wanted · iPhone">Testgruppen gesucht · iPhone</p>
+    <h1 data-en="Plan your next trip with&nbsp;TripSwipe.">Plant eure nächste Reise mit&nbsp;TripSwipe.</h1>
+    <p class="lead muted" data-en="Going away with friends in the next few weeks? Use TripSwipe before it's on the App Store: collect travel videos on one map, swipe together and end up with a plan everyone wants. Free, via Apple's TestFlight.">Ihr verreist in den nächsten Wochen mit Freunden? Nutzt TripSwipe, bevor es im App Store ist: Reisevideos auf einer Karte sammeln, gemeinsam swipen und am Ende einen Plan haben, den alle wollen. Kostenlos, über TestFlight von Apple.</p>
+    <div class="actions">
+      <a class="btn join" href="#los" data-en="Join the test">Jetzt mittesten</a>
+      <a class="btn ghost" href="#so" data-en="How it works">So funktioniert's</a>
+    </div>
+    <p class="small muted" data-en="Test version for iPhone. Your feedback goes straight into the app.">Testversion für iPhone. Euer Feedback fließt direkt in die App.</p>
+  </div>
+  <div class="phone"><div class="glass">
+    <video id="demo" src="img/video/swipen.mp4" poster="img/video/swipen.webp" muted loop playsinline preload="metadata" aria-label="Aufnahme aus der App: Orte werden nach rechts oder links geswipt" data-en-label="Recording from the app: places are swiped right or left"></video>
+  </div></div>
+</section>
+
+<section class="section" id="so">
+  <p class="kicker" data-en="How it works">So funktioniert's</p>
+  <h2 data-en="From 47 links in the chat to one&nbsp;plan.">Von 47 Links im Chat zu einem&nbsp;Plan.</h2>
+  <div class="steps">
+    <div class="card"><div class="num">1</div><h3 data-en="Collect">Sammeln</h3><p data-en="See a reel on TikTok or Instagram, share it to TripSwipe and confirm the place. It lands as a pin on your destination's map.">Reel in TikTok oder Instagram gesehen? Mit TripSwipe teilen, Ort bestätigen. Er landet als Pin auf der Karte eures Ziels.</p></div>
+    <div class="card"><div class="num">2</div><h3 data-en="Swipe">Swipen</h3><p data-en="Everyone swipes through the places: right means yes, left means no, up means a must. If everyone wants it, it's a match.">Alle swipen durch die Orte: rechts will ich, links lieber nicht, hoch muss ich hin. Wollen alle, ist es ein Match.</p></div>
+    <div class="card"><div class="num">3</div><h3 data-en="Plan">Planen</h3><p data-en="Matches become a day plan, sorted by area. Invite friends with one link, and everyone sees the same plan.">Aus den Matches wird ein Tagesplan, sortiert nach Gegend. Freunde kommen per Link dazu, alle sehen denselben Plan.</p></div>
+  </div>
+  <div class="shots">
+    <figure><img src="img/app/map.webp" alt="Illustrierte Karte mit Pins" data-en-alt="Illustrated map with pins" width="640" height="1391" loading="lazy"><figcaption data-en="All tips on one map">Alle Tipps auf einer Karte</figcaption></figure>
+    <figure><img src="img/app/swipe.webp" alt="Ein Ort zum Swipen" data-en-alt="A place to swipe" width="640" height="1391" loading="lazy"><figcaption data-en="Vote with a swipe">Abstimmen per Swipe</figcaption></figure>
+    <figure><img src="img/app/match.webp" alt="Match: alle wollen hin" data-en-alt="Match: everyone wants to go" width="640" height="1391" loading="lazy"><figcaption data-en="It's a match">Match</figcaption></figure>
+    <figure><img src="img/app/plan.webp" alt="Tagesplan" data-en-alt="Day plan" width="640" height="1391" loading="lazy"><figcaption data-en="Your day plan">Euer Tagesplan</figcaption></figure>
+  </div>
+</section>
+
+<section class="section">
+  <p class="kicker" data-en="The test">Der Test</p>
+  <h2 data-en="Who we're looking&nbsp;for.">Wen wir&nbsp;suchen.</h2>
+  <div class="two">
+    <div class="card">
+      <h3 data-en="You fit if …">Ihr passt, wenn …</h3>
+      <ul class="list">
+        <li data-en="<strong>you're travelling soon</strong>, ideally in the next two months">… ihr <strong>bald verreist</strong>, am besten in den nächsten zwei Monaten</li>
+        <li data-en="<strong>you're a group</strong> of two or more: friends, couples, a stag or hen party">… ihr <strong>zu zweit oder mehr</strong> seid: Freunde, Paare, Mädels- oder Jungstrip</li>
+        <li data-en="<strong>everyone has an iPhone</strong>. TripSwipe is iPhone only for now">… <strong>alle ein iPhone</strong> haben. TripSwipe gibt es vorerst nur fürs iPhone</li>
+        <li data-en="<strong>you tell us honestly</strong> what works and what bugs you">… ihr uns <strong>ehrlich sagt</strong>, was klappt und was nervt</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 data-en="What you get">Was ihr bekommt</h3>
+      <ul class="list">
+        <li data-en="<strong>Everything free</strong> while you test">… <strong>alles kostenlos</strong>, solange ihr testet</li>
+        <li data-en="<strong>Early access</strong> before the App Store launch">… <strong>früher Zugang</strong> vor dem Start im App Store</li>
+        <li data-en="<strong>A direct line</strong> to the two people building it. Your ideas end up in the app">… einen <strong>direkten Draht</strong> zu uns beiden, die die App bauen. Eure Ideen landen in der App</li>
+        <li data-en="<strong>A trip plan</strong> that doesn't get lost in the group chat">… einen <strong>Reiseplan</strong>, der nicht im Gruppenchat untergeht</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="creator">
+    <div>
+      <p class="kicker" data-en="For creators">Für Creator</p>
+      <h2 data-en="You make travel&nbsp;content?">Du machst Reise-Content?</h2>
+      <p class="lead muted" data-en="Plan your next group trip with TripSwipe and tell us what you think. Whether you post about it is entirely up to you. We'd rather hear honest feedback than read a nice ad.">Plan deine nächste Gruppenreise mit TripSwipe und sag uns, was du davon hältst. Ob du darüber postest, entscheidest du ganz allein. Ehrliches Feedback ist uns lieber als nette Werbung.</p>
+      <div class="actions"><a class="btn ghost" href="https://www.instagram.com/tripswipe.app/" target="_blank" rel="noopener" data-en="Message us on Instagram">Schreib uns auf Instagram</a></div>
+    </div>
+    <ul class="list">
+      <li data-en="<strong>Your group</strong> tests for free">… <strong>deine Gruppe</strong> testet kostenlos</li>
+      <li data-en="<strong>Early look</strong> at an app that's not out yet">… <strong>früher Blick</strong> auf eine App, die es noch nicht gibt</li>
+      <li data-en="<strong>Your ideas</strong> for new features reach us directly">… <strong>deine Ideen</strong> für neue Funktionen landen direkt bei uns</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="los">
+  <p class="kicker" data-en="Getting started">So geht's los</p>
+  <h2 data-en="Ready in three&nbsp;minutes.">In drei Minuten&nbsp;startklar.</h2>
+  <ol class="howto">
+    <li><span data-en="<strong>Install TestFlight</strong>, Apple's free app for test versions, from the App Store."><strong>TestFlight laden</strong>, die kostenlose App von Apple für Testversionen, aus dem App Store.</span></li>
+    <li><span class="tf-on" data-en="<strong>Open our test link</strong> on your iPhone and install TripSwipe."><strong>Unseren Testlink öffnen</strong>, auf dem iPhone, und TripSwipe installieren.</span><span class="tf-off" data-en="<strong>Write to us</strong> with &quot;TripSwipe test&quot; and we'll send you the test link."><strong>Schreib uns</strong> mit „TripSwipe testen“, dann schicken wir dir den Testlink.</span></li>
+    <li><span data-en="<strong>Create your trip</strong> and invite your friends with the link from the app. They join the test the same way."><strong>Trip anlegen</strong> und Freunde mit dem Link aus der App einladen. Sie kommen genauso in den Test.</span></li>
+  </ol>
+  <p class="muted" style="margin-top:22px;font-size:15px;max-width:720px" data-en="It's a test version, so things can go wrong. In TestFlight you can send us a screenshot with a note any time. How we handle your data: <a href='privacy.html'>Privacy</a>.">Es ist eine Testversion, es kann also mal etwas haken. In TestFlight kannst du uns jederzeit ein Bildschirmfoto mit einer Notiz schicken. Wie wir mit euren Daten umgehen: <a href="privacy.html">Datenschutz</a>.</p>
+</section>
+
+<section class="final">
+  <h2 data-en="Where are you&nbsp;going?">Wohin geht's bei&nbsp;euch?</h2>
+  <p class="lead muted" data-en="We're looking forward to your trip.">Wir freuen uns auf eure Reise.</p>
+  <div class="actions">
+    <a class="btn join" href="#los" data-en="Join the test">Jetzt mittesten</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <nav aria-label="Seiten"><a href="./" data-en="Home">Start</a><a href="support.html">Support</a><a href="privacy.html" data-en="Privacy">Datenschutz</a><a href="terms.html" data-en="Terms">Nutzung</a><a href="imprint.html" data-en="Legal notice">Impressum</a><a href="https://www.instagram.com/tripswipe.app/" target="_blank" rel="noopener">Instagram</a></nav>
+  <p>© 2026 TORCHTECHNOLOGY LTD · <a href="mailto:hello@torchtechnology.de">hello@torchtechnology.de</a></p>
+</footer>
+
+<script>
+// Öffentlicher TestFlight-Link: in App Store Connect unter TestFlight → externe Gruppe → „Öffentlicher Link“.
+// Leer: Die Knöpfe öffnen eine Mail an uns, dann schickt ihr den Link von Hand.
+var TESTFLIGHT_URL='https://testflight.apple.com/join/vNfgybGc';
+var MAIL_URL='mailto:hello@torchtechnology.de?subject=TripSwipe%20testen';
+document.querySelectorAll('.btn.join').forEach(function(b){b.href=TESTFLIGHT_URL||MAIL_URL;});
+document.querySelectorAll('.tf-on').forEach(function(el){el.hidden=!TESTFLIGHT_URL;});
+document.querySelectorAll('.tf-off').forEach(function(el){el.hidden=!!TESTFLIGHT_URL;});
+
+function setLang(l){
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-en]').forEach(function(el){
+    if(el.dataset.de===undefined)el.dataset.de=el.innerHTML;
+    el.innerHTML=l==='en'?el.dataset.en:el.dataset.de;
+  });
+  document.querySelectorAll('[data-en-alt]').forEach(function(el){
+    if(el.dataset.deAlt===undefined)el.dataset.deAlt=el.alt;
+    el.alt=l==='en'?el.dataset.enAlt:el.dataset.deAlt;
+  });
+  document.querySelectorAll('[data-en-label]').forEach(function(el){
+    if(el.dataset.deLabel===undefined)el.dataset.deLabel=el.getAttribute('aria-label');
+    el.setAttribute('aria-label',l==='en'?el.dataset.enLabel:el.dataset.deLabel);
+  });
+  var t=document.getElementById('lang');t.textContent=l==='en'?'DE':'EN';t.lang=l==='en'?'de':'en';
+  document.title=l==='en'?'Test TripSwipe – test groups wanted':'TripSwipe testen – Testgruppen gesucht';
+}
+var lang='de';
+try{
+  var q=/[?&]lang=(de|en)\b/.exec(location.search);
+  lang=q?q[1]:(localStorage.getItem('lang')||(/^de\b/i.test(navigator.language||'de')?'de':'en'));
+}catch(e){}
+setLang(lang);
+document.getElementById('lang').addEventListener('click',function(){lang=lang==='en'?'de':'en';try{localStorage.setItem('lang',lang);}catch(e){}setLang(lang);});
+
+// Video spielt nur, wenn „Bewegung reduzieren“ aus ist. Sonst bleibt das Standbild.
+var v=document.getElementById('demo');
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.autoplay=true;v.play().catch(function(){});}
+else{v.controls=true;}
+</script>
+</body>
+</html>
